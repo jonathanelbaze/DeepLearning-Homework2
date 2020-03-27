@@ -11,22 +11,35 @@ import random
 import spacy
 from torchtext.vocab import GloVe
 
+pd.set_option('display.max_rows', 500)
+pd.set_option('display.max_columns', 500)
+pd.set_option('display.width', 1000)
+
+
 trainid = pd.read_csv('train.csv', sep=',')
 testid = pd.read_csv('test.csv', sep=',')
 text = pd.read_csv('text.csv', sep=',')
 
+
 trainPD = pd.merge(text, trainid, left_on='id', right_on='id')
 test = pd.merge(text, testid, left_on='id', right_on='id')
 
+
+trainPD.columns = ['id', 'text', 'label']
 trainPD.to_csv('trainPD.csv')
+
+
+test.columns = ['id', 'text']
+test.to_csv('testPD.csv')
+
+
 
 #spacy.load("en_core_web_md")
 nlp = spacy.load("en")
 
 
 tokenizer = "spacy"
-TEXT = data.Field(sequential=True, tokenize=tokenizer, lower=True, include_lengths=True, batch_first=True,
-                  fix_length=200)
+TEXT = data.Field(sequential=True, tokenize=tokenizer, lower=True, include_lengths=True, batch_first=True)
 
 
 
@@ -34,17 +47,18 @@ LABEL = data.LabelField()
 
 
 
-train = data.TabularDataset(path='trainPD.csv', format='csv', fields=[('row', None), ('id', None), ('label', LABEL), ('text', TEXT)], skip_header=True)
+train = data.TabularDataset(path='trainPD.csv', format='csv', fields=[('row', None), ('id', None), ('text', TEXT), ('label', LABEL)], skip_header=True)
+test = data.TabularDataset(path='test.csv', format='csv', fields=[('row', None), ('id', None), ('text', TEXT)], skip_header=True)
 
 
-TEXT.build_vocab(train, vectors=GloVe(name='6B', dim=300), max_size=10000, min_freq = 10)
+TEXT.build_vocab(train, vectors=GloVe(name='6B', dim=300), max_size=10000, min_freq=6)
 LABEL.build_vocab(train,)
 
 
 train_data, valid_data = train.split(split_ratio=0.8, random_state=random.seed(123))
 train_iter, valid_iter = data.BucketIterator.splits((train_data, valid_data), batch_size=32, sort_key=lambda x: len(x.text), repeat=False, shuffle=True)
 
-
+print(TEXT.vocab.stoi)
 
 
 
