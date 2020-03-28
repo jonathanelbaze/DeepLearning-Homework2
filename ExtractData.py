@@ -48,7 +48,7 @@ LABEL = data.LabelField()
 
 
 train = data.TabularDataset(path='trainPD.csv', format='csv', fields=[('row', None), ('id', None), ('text', TEXT), ('label', LABEL)], skip_header=True)
-test = data.TabularDataset(path='test.csv', format='csv', fields=[('row', None), ('id', None), ('text', TEXT)], skip_header=True)
+# test = data.TabularDataset(path='test.csv', format='csv', fields=[('row', None), ('id', None), ('text', TEXT)], skip_header=True)
 
 
 TEXT.build_vocab(train, vectors=GloVe(name='6B', dim=300), max_size=10000, min_freq=6)
@@ -59,6 +59,7 @@ train_data, valid_data = train.split(split_ratio=0.8, random_state=random.seed(1
 train_iter, valid_iter = data.BucketIterator.splits((train_data, valid_data), batch_size=32, sort_key=lambda x: len(x.text), repeat=False, shuffle=True)
 
 print(TEXT.vocab.stoi)
+print(test['text'][0])
 
 
 

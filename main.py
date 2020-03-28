@@ -9,10 +9,11 @@ import torch.optim as optim
 import numpy as np
 from RNN import RNN
 from ExtractData import *
+import pickle
 
 # 'data -> tabular dataset -> import csv'
 
-
+"""
 def clip_gradient(model, clip_value):
     params = list(filter(lambda p: p.grad is not None, model.parameters()))
     for p in params:
@@ -91,14 +92,14 @@ word_embeddings = TEXT.vocab.vectors
 model = RNN(batch_size, output_size, hidden_size, vocab_size, embedding_length, word_embeddings)
 loss_fn = F.cross_entropy
 
-for epoch in range(10):
+for epoch in range(1):
     train_loss, train_acc = train_model(model, train_iter, epoch)
     val_loss, val_acc = eval_model(model, valid_iter)
 
     print(
         f'Epoch: {epoch + 1:02}, Train Loss: {train_loss:.3f}, Train Acc: {train_acc:.2f}%, Val. Loss: {val_loss:3f}, Val. Acc: {val_acc:.2f}%')
 
-
+"""
 
 # ''' Let us now predict the sentiment on a single sentence just for the testing purpose. '''
 # test_sen1 = "This is one of the best creation of Nolan. I can say, it's his magnum opus. Loved the soundtrack and especially those creative dialogues."
@@ -135,19 +136,28 @@ def predicts(model, test):
     return pred
 
 
-def predict(model, sentence):
-    tokenized = [tok.text for tok in nlp.tokenizer(sentence)]  #tokenize the sentence
-    indexed = [TEXT.vocab.stoi[t] for t in tokenized]          #convert to integer sequence
-    length = [len(indexed)]                                    #compute no. of words
-    tensor = torch.LongTensor(indexed).to(device)              #convert to tensor
-    tensor = tensor.unsqueeze(1).T                             #reshape in form of batch,no. of words
-    length_tensor = torch.LongTensor(length)                   #convert to tensor
-    prediction = model(tensor, length_tensor)                  #prediction
-    return prediction.item()
+model = pickle.load(open('mod.pkl', "rb"))
 
 
-pred = predict(model, test)
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+sentence = test['text'][5]
+# def predict(model, sentence):
+tokenized = [tok.text for tok in nlp.tokenizer(sentence)]  #tokenize the sentence
+indexed = [TEXT.vocab.stoi[t] for t in tokenized]          #convert to integer sequence
+length = [len(indexed)]                                    #compute no. of words
+tensor = torch.Tensor(indexed)                             #convert to tensor
+tensor = tensor.unsqueeze(1)                            #reshape in form of batch,no. of words
+length_tensor = torch.LongTensor(length)                   #convert to tensor
+prediction = model(tensor, length_tensor)                  #prediction
+    # return prediction.item()
 
-
-
-print(pred)
+# for sentence in test['text']:
+print(prediction)
+out = F.softmax(prediction, 0)
+print(torch.argmax(out[0]))
+print(out)
+# pred = predict(model, test['text'][0])
+#
+#
+#
+# print(pred)
