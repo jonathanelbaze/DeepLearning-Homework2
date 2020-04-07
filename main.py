@@ -13,7 +13,7 @@ import pickle
 
 # 'data -> tabular dataset -> import csv'
 
-"""
+
 def clip_gradient(model, clip_value):
     params = list(filter(lambda p: p.grad is not None, model.parameters()))
     for p in params:
@@ -99,7 +99,6 @@ for epoch in range(1):
     print(
         f'Epoch: {epoch + 1:02}, Train Loss: {train_loss:.3f}, Train Acc: {train_acc:.2f}%, Val. Loss: {val_loss:3f}, Val. Acc: {val_acc:.2f}%')
 
-"""
 
 # ''' Let us now predict the sentiment on a single sentence just for the testing purpose. '''
 # test_sen1 = "This is one of the best creation of Nolan. I can say, it's his magnum opus. Loved the soundtrack and especially those creative dialogues."

@@ -42,7 +42,6 @@ tokenizer = "spacy"
 TEXT = data.Field(sequential=True, tokenize=tokenizer, lower=True, include_lengths=True, batch_first=True)
 
 
-
 LABEL = data.LabelField()
 
 
@@ -51,7 +50,7 @@ train = data.TabularDataset(path='trainPD.csv', format='csv', fields=[('row', No
 # test = data.TabularDataset(path='test.csv', format='csv', fields=[('row', None), ('id', None), ('text', TEXT)], skip_header=True)
 
 
-TEXT.build_vocab(train, vectors=GloVe(name='6B', dim=300), max_size=10000, min_freq=6)
+TEXT.build_vocab(train, vectors=GloVe(name='6B', dim=300), max_size=10000, min_freq=10)
 LABEL.build_vocab(train,)
 
 

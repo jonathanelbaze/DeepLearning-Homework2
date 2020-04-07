@@ -31,8 +31,8 @@ class RNN(nn.Module):
         self.rnn = nn.RNN(embedding_length, hidden_size, num_layers=2, bidirectional=True)
         self.label = nn.Linear(4 *hidden_size, output_size)
 
-    def forward(self, input_sentences, batch_size=None):
 
+    def forward(self, input_sentences, batch_size=None):
         """
         Parameters
         ----------
